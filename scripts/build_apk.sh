@@ -37,7 +37,7 @@ fi
 
 java -jar "$apktool_jar_path" build \
   "$apktool_project_directory" \
-  --force-all \
+  --force \
   --frame-path "$apktool_framework_directory" \
   --output "$unsigned_apk_path"
 
