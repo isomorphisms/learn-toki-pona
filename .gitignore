@@ -1,0 +1,7 @@
+build/
+deliverables/
+app/src/main/build/
+node_modules/
+*.apk
+*.idsig
+*.p12
