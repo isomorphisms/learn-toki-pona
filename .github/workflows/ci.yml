@@ -68,6 +68,7 @@ jobs:
         run: |
           scripts/build_apk.sh \
             /tmp/apktool.jar \
+            "$ANDROID_SDK_ROOT/build-tools/35.0.1/zipalign" \
             "$ANDROID_SDK_ROOT/build-tools/35.0.1/lib/apksigner.jar"
 
       - name: Check rebuilt APK

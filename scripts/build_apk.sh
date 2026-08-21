@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -eu
 
-if [ "$#" -ne 2 ]; then
-  echo "usage: $0 /path/to/apktool.jar /path/to/apksigner.jar" >&2
+if [ "$#" -ne 3 ]; then
+  echo "usage: $0 /path/to/apktool.jar /path/to/zipalign /path/to/apksigner.jar" >&2
   exit 2
 fi
 
@@ -10,8 +10,10 @@ project_root_directory=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 apktool_project_directory="$project_root_directory/app/src/main"
 build_output_directory="$project_root_directory/build"
 apktool_jar_path="$1"
-apksigner_jar_path="$2"
+zipalign_path="$2"
+apksigner_jar_path="$3"
 unsigned_apk_path="$build_output_directory/Toki-Pona-Drills-v1.0.1-unsigned.apk"
+aligned_apk_path="$build_output_directory/Toki-Pona-Drills-v1.0.1-aligned.apk"
 signed_apk_path="$build_output_directory/Toki-Pona-Drills-v1.0.1.apk"
 signing_key_path="${TOKI_PONA_SIGNING_KEY_PATH:-$build_output_directory/Toki-Pona-Drills-update-key.p12}"
 signing_key_password="${TOKI_PONA_SIGNING_KEY_PASSWORD:-toki-pona-v1-offline}"
@@ -41,6 +43,12 @@ java -jar "$apktool_jar_path" build \
   --frame-path "$apktool_framework_directory" \
   --output "$unsigned_apk_path"
 
+"$zipalign_path" -P 16 -f -v 4 \
+  "$unsigned_apk_path" \
+  "$aligned_apk_path"
+
+"$zipalign_path" -c -P 16 -v 4 "$aligned_apk_path"
+
 java -jar "$apksigner_jar_path" sign \
   --ks "$signing_key_path" \
   --ks-type PKCS12 \
@@ -52,7 +60,7 @@ java -jar "$apksigner_jar_path" sign \
   --v3-signing-enabled true \
   --v4-signing-enabled false \
   --out "$signed_apk_path" \
-  "$unsigned_apk_path"
+  "$aligned_apk_path"
 
 java -jar "$apksigner_jar_path" verify \
   --verbose \
