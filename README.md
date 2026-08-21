@@ -29,13 +29,16 @@ npm test
 
 The application is local HTML, CSS, and JavaScript in a WebView, with a minimal Android wrapper in Smali. It contains no Java or Kotlin application source.
 
-The included build script uses Apktool 2.x and Android's `apksigner`:
+The included build script uses Apktool 2.x and Android's `zipalign` and `apksigner`. Alignment must happen before signing; modern Android rejects an APK whose uncompressed resource table is not aligned on a four-byte boundary.
 
 ```sh
-./scripts/build_apk.sh /path/to/apktool.jar /path/to/apksigner.jar
+./scripts/build_apk.sh \
+  /path/to/apktool.jar \
+  /path/to/zipalign \
+  /path/to/apksigner.jar
 ```
 
-The script creates a local signing key under `build/` when one does not exist. Keep a signing key if future APKs should install as upgrades over an earlier build.
+The script creates a local development signing key under `build/` when one does not exist. For a release, set `TOKI_PONA_SIGNING_KEY_PATH` and `TOKI_PONA_SIGNING_KEY_PASSWORD` to the retained private release key. Android accepts a later APK as an update only when it uses that same signing identity and a larger version code.
 
 ## Font
 

@@ -7,22 +7,25 @@ const { chromium } = require("playwright");
 
 async function run_browser_smoke_check() {
   const chromium_package_path = process.env.TOKI_PONA_CHROMIUM_PACKAGE_PATH;
-  if (!chromium_package_path) {
-    throw new Error("TOKI_PONA_CHROMIUM_PACKAGE_PATH must point to @sparticuz/chromium.");
-  }
-  const packaged_chromium_module = await import(pathToFileURL(
-    path.join(chromium_package_path, "build/index.js")
-  ).href);
-  const packaged_chromium = packaged_chromium_module.default;
-  packaged_chromium.setGraphicsMode = false;
-  const executable_path = await packaged_chromium_module.inflate(
-    path.join(chromium_package_path, "bin/chromium.br")
-  );
-  const browser = await chromium.launch({
-    executablePath: executable_path,
-    args: packaged_chromium.args.concat(["--allow-file-access-from-files"]),
+  let launch_options = {
+    args: ["--allow-file-access-from-files"],
     headless: true
-  });
+  };
+  if (chromium_package_path) {
+    const packaged_chromium_module = await import(pathToFileURL(
+      path.join(chromium_package_path, "build/index.js")
+    ).href);
+    const packaged_chromium = packaged_chromium_module.default;
+    packaged_chromium.setGraphicsMode = false;
+    launch_options = {
+      executablePath: await packaged_chromium_module.inflate(
+        path.join(chromium_package_path, "bin/chromium.br")
+      ),
+      args: packaged_chromium.args.concat(["--allow-file-access-from-files"]),
+      headless: true
+    };
+  }
+  const browser = await chromium.launch(launch_options);
   const context = await browser.newContext({ viewport: { width: 412, height: 915 } });
   const page = await context.newPage();
   const console_errors = [];
