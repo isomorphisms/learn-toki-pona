@@ -40,6 +40,11 @@ The included build script uses Apktool 2.x and Android's `zipalign` and `apksign
 
 The script creates a local development signing key under `build/` when one does not exist. For a release, set `TOKI_PONA_SIGNING_KEY_PATH` and `TOKI_PONA_SIGNING_KEY_PASSWORD` to the retained private release key. Android accepts a later APK as an update only when it uses that same signing identity and a larger version code.
 
+Google Play receives an Android App Bundle rather than this reconstructed APK.
+The Gradle path builds it with `./gradlew :app:bundleRelease`; see
+[`docs/google-play-release.md`](docs/google-play-release.md) for signing
+continuity and the credential-gated internal-testing workflow.
+
 ## Font
 
 The app embeds **sitelen seli kiwen asuki** by KreativeKorp / jan Lepeka under the SIL Open Font License 1.1. Its license is included beside the font in the app assets.
