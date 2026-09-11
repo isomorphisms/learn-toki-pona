@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   content-and-browser-tests:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, debian]
     timeout-minutes: 20
     steps:
       - name: Check out source
@@ -39,7 +39,7 @@ jobs:
         run: npm run test:browser
 
   rebuild-and-verify-apk:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, debian]
     timeout-minutes: 20
     steps:
       - name: Check out source
@@ -75,7 +75,7 @@ jobs:
         run: test -s build/Toki-Pona-Drills-v1.0.1.apk
 
   build-play-bundle:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux, debian]
     timeout-minutes: 20
     steps:
       - name: Check out source
